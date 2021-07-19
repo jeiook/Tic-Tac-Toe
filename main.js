@@ -1,7 +1,7 @@
 const Gameboard = (() => {
-	const board = ['o', null, 'o', 
-					null, 'x', null, 
-					'o', null, 'o'];
+	const board = [null, null, null, 
+					null, null, null, 
+					null, null, null];
 	const _size = 9;
 	const size = () => _size;
 	const at = (i) => board[i];
@@ -42,21 +42,46 @@ const DOMGenerator = (() => {
 			divs[i].id = i;
 			divs[i].classList.add("grid-item");
 			divs[i].textContent = Gameboard.at(i);
+			divs[i].onclick = (e) => {
+				Interaction.updateBoard(i);
+			};
 		}
 		divs.forEach(e => {
 			gameDiv.appendChild(e);
 		});
 	};
+	const refreshRender = (i, val) => {
+		const box = document.getElementById(i);
+		box.textContent = val;
+	}
 	return {
 		initBoard,
+		refreshRender
 	};
 })();
 
 const Interaction = (() => {
+	let _turn = 'x'
+	const turn = () => _turn;
+	const endTurn = () => {
+		if (_turn == 'x') {
+			_turn = 'o';
+		} else {
+			_turn = 'x';
+		}
+	};
+	const updateBoard = (i) => {
+		if (!Gameboard.at(i)) {
+			Gameboard.setAt(i, turn());
+			DOMGenerator.refreshRender(i, turn());
+			endTurn();
+		}
+	}
 	const main = () => {
 		DOMGenerator.initBoard();
 	};
 	return {
+		updateBoard,
 		main,
 	};
 })();
