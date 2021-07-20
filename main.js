@@ -43,6 +43,7 @@ const Gameboard = (() => {
 
 const DOMGenerator = (() => {
 	const gameDiv = document.querySelector("#game");
+	const resetBtn = document.querySelector("#reset");
 	const statusDiv = document.querySelector("#status");
 	const initBoard = () => {
 		divs = [];
@@ -58,23 +59,33 @@ const DOMGenerator = (() => {
 		divs.forEach(e => {
 			gameDiv.appendChild(e);
 		});
+		resetBtn.onclick = (e) => {
+			Interaction.reset();	
+		};
 	};
 	const refreshRender = (i, val) => {
 		const box = document.getElementById(i);
 		box.textContent = val;
 	};
+	const refreshRenderAll = () => {
+		for (let i = 0; i < Gameboard.size(); i++) {
+			document.getElementById(i).textContent = Gameboard.at(i);
+		}
+		statusDiv.textContent = null;
+	}
 	const showEndScreen = (winner) => {
 		statusDiv.textContent = `Game over! Player ${winner} is the winner!`;
 	};
 	return {
 		initBoard,
 		refreshRender,
+		refreshRenderAll,
 		showEndScreen,
 	};
 })();
 
 const Interaction = (() => {
-	let _turn = 'x'
+	let _turn = 'x';
 	let _playing = true;
 	const turn = () => _turn;
 	const endTurn = () => {
@@ -111,11 +122,18 @@ const Interaction = (() => {
 			endTurn();
 		}
 	};
+	const reset = () => {
+		_turn = 'x';
+		_playing = true;
+		Gameboard.reset();
+		DOMGenerator.refreshRenderAll();
+	};
 	const main = () => {
 		DOMGenerator.initBoard();
 	};
 	return {
 		updateBoard,
+		reset,
 		main,
 	};
 })();
